@@ -29,6 +29,7 @@
     type="is-black"
     size="is-medium"
     class="paneltag-input"
+    tabindex="10"
     @typing="searchTags"
     @add="clearCurrentFilter"
     @remove="clearCurrentFilter"

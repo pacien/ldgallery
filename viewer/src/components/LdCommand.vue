@@ -20,19 +20,20 @@
 
 <template>
   <div class="flex command-btns">
-    <a class="link" :title="$t('command.search')" @click="$uiStore.toggleFullWidth()">
+    <a class="link" :title="$t('command.search')" tabindex="20" @click="$uiStore.toggleFullWidth()">
       <fa-icon :icon="commandToggleSearchPanelIcon" size="lg" />
     </a>
-    <ld-command-sort />
+    <ld-command-sort tabindex="21" />
     <a
       :class="{ disabled: isEntryPoint }"
       class="link command-secondary"
       :title="$t('command.back')"
+      tabindex="22"
       @click="isEntryPoint || $router.back()"
     >
       <fa-icon icon="arrow-left" size="lg" />
     </a>
-    <router-link :class="{ disabled: isRoot }" :title="$t('command.parent')" :to="parent">
+    <router-link :class="{ disabled: isRoot }" :title="$t('command.parent')" :to="parent" tabindex="23">
       <fa-icon icon="folder" size="xs" />
       <fa-icon icon="level-up-alt" size="lg" />
     </router-link>

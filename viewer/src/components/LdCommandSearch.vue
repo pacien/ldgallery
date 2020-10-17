@@ -19,11 +19,11 @@
 
 <template>
   <div class="flex webkit-flex-shrink-fix">
-    <b-button @click="clear">
+    <b-button tabindex="12" @click="clear">
       <fa-icon icon="eraser" />
       <span>{{ $t("command.search.clear") }}</span>
     </b-button>
-    <b-button expanded @click="search">
+    <b-button expanded tabindex="11" @click="search">
       <fa-icon icon="search" />
       <span>{{ $t("command.search.search") }}</span>
     </b-button>
