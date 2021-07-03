@@ -44,6 +44,7 @@ export default class GalleryNavigation extends Vue {
     directory: "ld-directory-viewer",
     picture: "ld-picture-viewer",
     plaintext: "ld-plain-text-viewer",
+    markdown: "ld-markdown-viewer",
     pdf: "ld-pdf-viewer",
     video: "ld-video-viewer",
     audio: "ld-audio-viewer",
