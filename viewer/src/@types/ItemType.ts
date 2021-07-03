@@ -21,6 +21,7 @@ export enum ItemType {
   OTHER = "other",
   PICTURE = "picture",
   PLAINTEXT = "plaintext",
+  MARKDOWN = "markdown",
   PDF = "pdf",
   VIDEO = "video",
   AUDIO = "audio",

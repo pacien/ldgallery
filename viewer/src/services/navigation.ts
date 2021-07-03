@@ -25,6 +25,7 @@ export default class Navigation {
     directory: "folder",
     picture: "image",
     plaintext: "file-alt",
+    markdown: "file-alt",
     pdf: "file-pdf",
     video: "file-video",
     audio: "file-audio",
