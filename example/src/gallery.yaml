@@ -8,6 +8,7 @@
 includedFiles:
   - '*.jpg'
   - '*.txt'
+  - '*.md'
   - '*.pdf'
   - '*.ogg'
   - '*.mp4'

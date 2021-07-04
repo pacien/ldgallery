@@ -1,7 +1,7 @@
 -- ldgallery - A static generator which turns a collection of tagged
 --             pictures into a searchable web gallery.
 --
--- Copyright (C) 2019-2020  Pacien TRAN-GIRARD
+-- Copyright (C) 2019-2021  Pacien TRAN-GIRARD
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Affero General Public License as
@@ -36,6 +36,7 @@ import Files
 data Format =
     PictureFormat
   | PlainTextFormat
+  | MarkdownFormat
   | PortableDocumentFormat
   | VideoFormat
   | AudioFormat
@@ -56,7 +57,7 @@ formatFromPath =
       ".gif" -> PictureFormat
       ".webp" -> PictureFormat
       ".txt" -> PlainTextFormat
-      ".md" -> PlainTextFormat -- TODO: handle markdown separately
+      ".md" -> MarkdownFormat
       ".pdf" -> PortableDocumentFormat
       ".wav" -> AudioFormat
       ".oga" -> AudioFormat
@@ -100,6 +101,7 @@ itemFileProcessor maxResolution =
     processorFor PictureFormat Nothing =
       transformThenDescribe copyFileProcessor getPictureProps
     processorFor PlainTextFormat _ = copyResource PlainText
+    processorFor MarkdownFormat _ = copyResource Markdown
     processorFor PortableDocumentFormat _ = copyResource PDF
     processorFor VideoFormat _ = copyResource Video
     processorFor AudioFormat _ = copyResource Audio
