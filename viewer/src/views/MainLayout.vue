@@ -30,16 +30,20 @@
       tabindex="01"
     />
     <b-loading :active="isLoading" is-full-page />
-    <ld-key-press :keycode="27" @action="$uiStore.toggleFullscreen(false)" />
+    <ld-key-press :actions="keyboardActions" event="keydown" />
   </div>
 </template>
 
 <script lang="ts">
 import { ScrollPosition } from "@/@types/scrollposition";
+import { keyboardAction } from "@/components/LdKeyPress.vue";
 import { Component, Ref, Vue, Watch } from "vue-property-decorator";
 import { Route } from "vue-router";
 import PanelLeft from "./PanelLeft.vue";
 import PanelTop from "./PanelTop.vue";
+
+const ARROWKEYS_SPEED_VH = 1 / 3; // A third of the vertical height
+const SCROLL_DEBOUNCE_MS = 250; // Arbitrary timer since JS has no scroll-end callback
 
 @Component({
   components: { PanelLeft, PanelTop },
@@ -49,10 +53,9 @@ export default class MainLayout extends Vue {
 
   isLoading: boolean = true;
   scrollPositions: ScrollPosition = {};
+  debounce: NodeJS.Timeout | null = null;
 
-  get contentDiv() {
-    return this.content.$el as HTMLDivElement;
-  }
+  // ---
 
   mounted() {
     history.replaceState({ ldgallery: "ENTRYPOINT" }, "");
@@ -64,16 +67,63 @@ export default class MainLayout extends Vue {
     document.body.removeEventListener("fullscreenchange", this.onFullscreenChange);
   }
 
-  moveFocusToContentDiv() {
-    setTimeout(() => this.contentDiv.focus());
+  // ---
+
+  get isReady() {
+    return !this.isLoading && this.$galleryStore.config && this.$galleryStore.currentPath !== null;
+  }
+
+  get contentDiv() {
+    return this.content.$el as HTMLDivElement;
+  }
+
+  get keyboardActions(): keyboardAction[] {
+    return [
+      {
+        keys: ["Escape"],
+        action: () => this.$uiStore.toggleFullscreen(false),
+      },
+      {
+        keys: ["ArrowUp", "ArrowDown", "PageUp", "PageDown"],
+        action: e => {
+          e.preventDefault();
+          if (this.debounce !== null) return;
+          this.debounce = setTimeout(() => (this.debounce = null), SCROLL_DEBOUNCE_MS);
+          this.contentDiv.scrollBy({ ...this.keyboardScroll(e), behavior: "smooth" });
+        },
+      },
+    ];
+  }
+
+  keyboardScroll(e: KeyboardEvent) {
+    const vh = window.innerHeight;
+    switch (e.key) {
+      case "ArrowUp":
+        if (this.isActiveElementFilledInput()) return {};
+        return { top: -vh * ARROWKEYS_SPEED_VH };
+      case "ArrowDown":
+        if (this.isActiveElementFilledInput()) return {};
+        return { top: vh * ARROWKEYS_SPEED_VH };
+      case "PageUp":
+        return { top: -vh };
+      case "PageDown":
+        return { top: vh };
+    }
+  }
+
+  isActiveElementFilledInput(): boolean {
+    const ae = document.activeElement;
+    const isInput = ae?.tagName === "INPUT";
+    return isInput && (ae as HTMLInputElement).value.length > 0;
   }
 
   @Watch("$route")
   routeChanged(newRoute: Route, oldRoute: Route) {
     this.scrollPositions[oldRoute.path] = this.contentDiv.scrollTop;
     this.$nextTick(() => (this.contentDiv.scrollTop = this.scrollPositions[newRoute.path]));
-    this.moveFocusToContentDiv();
   }
+
+  // ---
 
   fetchGalleryItems() {
     this.isLoading = true;
@@ -81,13 +131,8 @@ export default class MainLayout extends Vue {
       .fetchConfig()
       .then(this.$uiStore.initFromConfig)
       .then(this.$galleryStore.fetchGalleryItems)
-      .then(this.moveFocusToContentDiv)
       .finally(() => (this.isLoading = false))
       .catch(this.displayError);
-  }
-
-  get isReady() {
-    return !this.isLoading && this.$galleryStore.config && this.$galleryStore.currentPath !== null;
   }
 
   displayError(reason: any) {

@@ -18,11 +18,16 @@
 -->
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
+
+export interface keyboardAction {
+  keys: string[];
+  action: (e: KeyboardEvent) => any;
+}
 
 @Component
 export default class LdKeyPress extends Vue {
-  @Prop({ type: Number, required: true }) readonly keycode!: number;
+  @Prop({ type: Array, required: true }) readonly actions!: keyboardAction[];
   @Prop({ type: String, default: "keyup" }) readonly event!: "keyup" | "keydown" | "keypress";
 
   mounted() {
@@ -38,12 +43,7 @@ export default class LdKeyPress extends Vue {
   }
 
   private onEvent(e: KeyboardEvent) {
-    if (e.keyCode === this.keycode) this.action(e);
-  }
-
-  @Emit()
-  private action(e: KeyboardEvent) {
-    return e;
+    this.actions.filter(action => action.keys.includes(e.key)).forEach(action => action.action(e));
   }
 }
 </script>
