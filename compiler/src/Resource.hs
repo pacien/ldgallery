@@ -1,7 +1,7 @@
 -- ldgallery - A static generator which turns a collection of tagged
 --             pictures into a searchable web gallery.
 --
--- Copyright (C) 2019-2020  Pacien TRAN-GIRARD
+-- Copyright (C) 2019-2021  Pacien TRAN-GIRARD
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Affero General Public License as
@@ -90,6 +90,7 @@ data GalleryItemProps =
     { resource :: Resource
     , resolution :: Resolution }
   | PlainText { resource :: Resource }
+  | Markdown { resource :: Resource }
   | PDF { resource :: Resource }
   | Video { resource :: Resource }
   | Audio { resource :: Resource }
